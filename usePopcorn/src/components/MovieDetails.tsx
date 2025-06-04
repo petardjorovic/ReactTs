@@ -8,7 +8,7 @@ type MovieDetailsProps = {
   selectedId: string;
   onCloseMovie: () => void;
   onAddWatched: (w: WatchedMovie) => void;
-  isWatchedExist: (id: string) => boolean;
+  watched: WatchedMovie[];
 };
 
 const KEY: string = "b2c1fcd0";
@@ -17,13 +17,20 @@ export default function MovieDetails({
   selectedId,
   onCloseMovie,
   onAddWatched,
-  isWatchedExist,
+  watched,
 }: MovieDetailsProps) {
   const [movie, setMovie] = useState<SingleMovie | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [userRating, setUserRating] = useState(0);
-  const [isExist, setIsExist] = useState(false);
+
+  const isWatched: boolean = watched
+    .map((movie) => movie.imdbID)
+    .includes(selectedId);
+
+  const currentUserRate = watched.find(
+    (movie) => movie.imdbID === selectedId
+  )?.userRating;
 
   const handleAddWatched = () => {
     if (movie) {
@@ -93,15 +100,22 @@ export default function MovieDetails({
           </header>
           <section>
             <div className="rating">
-              <StarRating
-                maxRating={10}
-                size={24}
-                onSetRating={setUserRating}
-              />
-              {userRating > 0 && (
-                <button className="btn-add" onClick={handleAddWatched}>
-                  + Add to list
-                </button>
+              {!isWatched ? (
+                <>
+                  <StarRating
+                    maxRating={10}
+                    size={24}
+                    onSetRating={setUserRating}
+                  />
+
+                  {userRating > 0 && (
+                    <button className="btn-add" onClick={handleAddWatched}>
+                      + Add to list
+                    </button>
+                  )}
+                </>
+              ) : (
+                <p>You rate this movie with {currentUserRate}⭐</p>
               )}
             </div>
             <p>

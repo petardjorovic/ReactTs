@@ -2,9 +2,13 @@ import type { WatchedMovie } from "../lib/types";
 
 type WatchedMovieItemProps = {
   movie: WatchedMovie;
+  onRemoveWatched: (id: string) => void;
 };
 
-export default function WatchedMovieItem({ movie }: WatchedMovieItemProps) {
+export default function WatchedMovieItem({
+  movie,
+  onRemoveWatched,
+}: WatchedMovieItemProps) {
   return (
     <li>
       <img src={movie.Poster} alt={`${movie.Title} poster`} />
@@ -23,6 +27,12 @@ export default function WatchedMovieItem({ movie }: WatchedMovieItemProps) {
           <span>{movie.runtime}</span>
         </p>
       </div>
+      <button
+        className="btn-delete"
+        onClick={() => onRemoveWatched(movie.imdbID)}
+      >
+        X
+      </button>
     </li>
   );
 }

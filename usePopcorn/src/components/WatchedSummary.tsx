@@ -27,15 +27,15 @@ export default function WatchedSummary({ watched }: WatchedSummaryProps) {
         </p>
         <p>
           <span>⭐️</span>
-          <span>{averageImbdRating}</span>
+          <span>{averageImbdRating.toFixed(2)}</span>
         </p>
         <p>
           <span>🌟</span>
-          <span>{averageUserRating}</span>
+          <span>{averageUserRating.toFixed(2)}</span>
         </p>
         <p>
           <span>⏳</span>
-          <span>{averageRuntime} min</span>
+          <span>{averageRuntime.toFixed(0)} min</span>
         </p>
       </div>
     </div>
