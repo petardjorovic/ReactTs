@@ -76,6 +76,33 @@ export default function MovieDetails({
     getMovieDeatils();
   }, [selectedId]);
 
+  useEffect(() => {
+    if (!movie?.Title) {
+      return;
+    } else {
+      document.title = `Movie | ${movie.Title}`;
+    }
+
+    return function () {
+      document.title = "usePopcorn";
+      // console.log(`Clean up effect for movie ${movie.Title}`);
+    };
+  }, [movie?.Title]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === "Escape") {
+        onCloseMovie();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return function () {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [onCloseMovie]);
+
   return (
     <div className="details">
       {isLoading && <Loader />}
