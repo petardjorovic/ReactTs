@@ -17,10 +17,32 @@ const KEY: string = "b2c1fcd0";
 function App() {
   const [query, setQuery] = useState("");
   const [movies, setMovies] = useState<Movie[]>([]);
-  const [watched, setWatched] = useState<WatchedMovie[]>([]);
+  // const [watched, setWatched] = useState<WatchedMovie[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  //! callback funkcija nema argumente i mora da vraca vrednost
+  const [watched, setWatched] = useState<WatchedMovie[]>(function () {
+    const value = localStorage.getItem("watched");
+    if (value !== null) {
+      return JSON.parse(value) as WatchedMovie[];
+    }
+    return [];
+  });
+
+  //* ovo bi bilo jos sigurnije, da baci gresku ako nadje korumpiran JSON u localStorage
+  //   const [watched, setWatched] = useState<WatchedMovie[]>(function () {
+  //   try {
+  //     const value = localStorage.getItem("watched");
+  //     if (value !== null) {
+  //       return JSON.parse(value) as WatchedMovie[];
+  //     }
+  //   } catch (e) {
+  //     console.error("Failed to parse watched movies from localStorage:", e);
+  //   }
+  //   return [];
+  // });
 
   const handleSelectMovie = (id: string) => {
     setSelectedId((prev) => (prev === id ? null : id));
@@ -30,8 +52,10 @@ function App() {
     setSelectedId(null);
   };
 
-  const handleAddWatched = (watched: WatchedMovie) => {
-    setWatched((wat) => [...wat, watched]);
+  const handleAddWatched = (movie: WatchedMovie) => {
+    setWatched((wat) => [...wat, movie]);
+
+    // localStorage.setItem("watched", JSON.stringify([...watched, movie]));
   };
 
   const handleRemoveWatched = (id: string) => {
@@ -81,6 +105,10 @@ function App() {
       contoller.abort();
     };
   }, [query]);
+
+  useEffect(() => {
+    localStorage.setItem("watched", JSON.stringify(watched));
+  }, [watched]);
 
   return (
     <>

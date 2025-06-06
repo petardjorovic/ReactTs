@@ -24,6 +24,28 @@ export default function MovieDetails({
   const [error, setError] = useState("");
   const [userRating, setUserRating] = useState(0);
 
+  //! hook-ovi moraju biti u top levelu komponente
+  // if (Number(movie?.imdbRating) > 8) {
+  //   const [isTop, setIsTop] = useState(true);
+  // }
+
+  //! early return je zabranjen isto, return mora ici posle svih hook-ova
+  // if (Number(movie?.imdbRating) > 8) return;
+
+  //! ovo ce uvek da bude false, jel je to inicijalna vrednost samo set funkcija moze da je promeni
+  // const [isTop, setIsTop] = useState(Number(movie?.imdbRating) > 8);
+  // console.log(isTop, "isTop");
+
+  // useEffect(() => {
+  //   setIsTop(Number(movie?.imdbRating) > 8);
+  // }, [movie?.imdbRating]);
+
+  //* derived state se na svaki render obracunava
+  // const isTop = Number(movie?.imdbRating) > 8;
+  // console.log(isTop, "isTop");
+
+  // const [avgRating, setAvgRating] = useState(0);
+
   const isWatched: boolean = watched
     .map((movie) => movie.imdbID)
     .includes(selectedId);
@@ -45,6 +67,9 @@ export default function MovieDetails({
       };
 
       onAddWatched(newWatched);
+      // setAvgRating(Number(movie.imdbRating));
+      // setAvgRating((prev) => (prev + userRating) / 2);
+
       onCloseMovie();
     }
   };
@@ -125,6 +150,7 @@ export default function MovieDetails({
               </p>
             </div>
           </header>
+          {/* <p>{avgRating}</p> */}
           <section>
             <div className="rating">
               {!isWatched ? (
