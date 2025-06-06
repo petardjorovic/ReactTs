@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { useKey } from "../utils/useKey";
 
 type SearchBarProps = {
   query: string;
@@ -12,20 +13,25 @@ export default function SearchBar({ query, onQueryChange }: SearchBarProps) {
     inputRef.current?.focus();
   }, []);
 
-  useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if (document.activeElement === inputRef.current) return;
+  useKey("Enter", function () {
+    if (document.activeElement === inputRef.current) return;
+    inputRef.current?.focus();
+    onQueryChange("");
+  });
 
-      if (e.code === "Enter") {
-        inputRef.current?.focus();
-        onQueryChange("");
-      }
-    }
+  // useEffect(() => {
+  //   function handleKeyDown(e: KeyboardEvent) {
+  //     if (e.code === "Enter") {
+  //       if (document.activeElement === inputRef.current) return;
+  //       inputRef.current?.focus();
+  //       onQueryChange("");
+  //     }
+  //   }
 
-    document.addEventListener("keydown", handleKeyDown);
+  //   document.addEventListener("keydown", handleKeyDown);
 
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [onQueryChange]);
+  //   return () => document.removeEventListener("keydown", handleKeyDown);
+  // }, [onQueryChange]);
 
   return (
     <input
