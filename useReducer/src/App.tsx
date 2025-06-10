@@ -5,6 +5,8 @@ import Loader from "./components/Loader";
 import ErrorComponent from "./components/ErrorComponent";
 import StartScreen from "./components/StartScreen";
 import Question from "./components/Question";
+import NextButton from "./components/NextButton";
+import Progress from "./components/Progress";
 
 export type QuestionType = {
   question: string;
@@ -18,6 +20,8 @@ type InitState = {
   questions: QuestionType[];
   status: string;
   index: number;
+  answer: number | null;
+  points: number;
 };
 
 const initialState: InitState = {
@@ -25,12 +29,16 @@ const initialState: InitState = {
   // 'loading', 'error', 'ready', 'active', 'finished'
   status: "loading",
   index: 0,
+  answer: null,
+  points: 0,
 };
 
 export type ActionType =
   | { type: "dataReceived"; payload: QuestionType[] }
   | { type: "dataFailed" }
-  | { type: "start" };
+  | { type: "start" }
+  | { type: "newAnswer"; payload: number }
+  | { type: "nextQuestion" };
 
 function reducer(state: InitState, action: ActionType) {
   switch (action.type) {
@@ -40,18 +48,36 @@ function reducer(state: InitState, action: ActionType) {
       return { ...state, status: "error" };
     case "start":
       return { ...state, status: "active" };
+    case "newAnswer": {
+      const question = state.questions[state.index];
+
+      return {
+        ...state,
+        answer: action.payload,
+        points:
+          question.correctOption === action.payload
+            ? state.points + question.points
+            : state.points,
+      };
+    }
+    case "nextQuestion":
+      return { ...state, index: state.index + 1, answer: null };
     default:
       throw new Error("Unknown type");
   }
 }
 
 function App() {
-  const [{ questions, status, index }, dispatch] = useReducer(
+  const [{ questions, status, index, answer, points }, dispatch] = useReducer(
     reducer,
     initialState
   );
 
   const numQuestions = questions.length;
+  const maxPosiblePoints = questions.reduce(
+    (total, current) => total + current.points,
+    0
+  );
 
   useEffect(() => {
     fetch("http://localhost:9000/questions")
@@ -72,7 +98,23 @@ function App() {
         {status === "ready" && (
           <StartScreen numQuestions={numQuestions} dispatch={dispatch} />
         )}
-        {status === "active" && <Question question={questions[index]} />}
+        {status === "active" && (
+          <>
+            <Progress
+              index={index}
+              numQuestions={numQuestions}
+              points={points}
+              maxPosiblePoints={maxPosiblePoints}
+              answer={answer}
+            />
+            <Question
+              question={questions[index]}
+              dispatch={dispatch}
+              answer={answer}
+            />
+            <NextButton answer={answer} dispatch={dispatch} />
+          </>
+        )}
       </Main>
     </div>
   );

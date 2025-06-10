@@ -1,18 +1,21 @@
-import type { QuestionType } from "../App";
+import type { ActionType, QuestionType } from "../App";
+import Options from "./Options";
 
-type QuestionProps = {
+export type QuestionProps = {
   question: QuestionType;
+  dispatch: React.ActionDispatch<[action: ActionType]>;
+  answer: number | null;
 };
 
-export default function Question({ question }: QuestionProps) {
+export default function Question({
+  question,
+  dispatch,
+  answer,
+}: QuestionProps) {
   return (
-    <div className="options">
+    <div>
       <h4>{question.question}</h4>
-      {question.options.map((option) => (
-        <button key={option} className="btn btn-option">
-          {option}
-        </button>
-      ))}
+      <Options question={question} dispatch={dispatch} answer={answer} />
     </div>
   );
 }
