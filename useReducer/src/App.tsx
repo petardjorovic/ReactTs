@@ -4,8 +4,9 @@ import Main from "./components/Main";
 import Loader from "./components/Loader";
 import ErrorComponent from "./components/ErrorComponent";
 import StartScreen from "./components/StartScreen";
+import Question from "./components/Question";
 
-type QuestionType = {
+export type QuestionType = {
   question: string;
   options: [string, string, string, string];
   correctOption: number;
@@ -16,32 +17,41 @@ type QuestionType = {
 type InitState = {
   questions: QuestionType[];
   status: string;
+  index: number;
 };
 
 const initialState: InitState = {
   questions: [],
   // 'loading', 'error', 'ready', 'active', 'finished'
   status: "loading",
+  index: 0,
 };
 
-type ActionType =
+export type ActionType =
   | { type: "dataReceived"; payload: QuestionType[] }
-  | { type: "dataFailed" };
+  | { type: "dataFailed" }
+  | { type: "start" };
 
 function reducer(state: InitState, action: ActionType) {
-  console.log(state, action);
   switch (action.type) {
     case "dataReceived":
       return { ...state, questions: action.payload, status: "ready" };
     case "dataFailed":
       return { ...state, status: "error" };
+    case "start":
+      return { ...state, status: "active" };
     default:
       throw new Error("Unknown type");
   }
 }
 
 function App() {
-  const [{ questions, status }, dispatch] = useReducer(reducer, initialState);
+  const [{ questions, status, index }, dispatch] = useReducer(
+    reducer,
+    initialState
+  );
+
+  const numQuestions = questions.length;
 
   useEffect(() => {
     fetch("http://localhost:9000/questions")
@@ -59,7 +69,10 @@ function App() {
       <Main>
         {status === "loading" && <Loader />}
         {status === "error" && <ErrorComponent />}
-        {status === "ready" && <StartScreen />}
+        {status === "ready" && (
+          <StartScreen numQuestions={numQuestions} dispatch={dispatch} />
+        )}
+        {status === "active" && <Question question={questions[index]} />}
       </Main>
     </div>
   );
