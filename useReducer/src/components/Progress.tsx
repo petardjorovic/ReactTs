@@ -2,7 +2,7 @@ type ProgressProps = {
   points: number;
   numQuestions: number;
   index: number;
-  maxPosiblePoints: number;
+  maxPossiblePoints: number;
   answer: number | null;
 };
 
@@ -10,7 +10,7 @@ export default function Progress({
   points,
   numQuestions,
   index,
-  maxPosiblePoints,
+  maxPossiblePoints,
   answer,
 }: ProgressProps) {
   return (
@@ -20,7 +20,7 @@ export default function Progress({
         Question {index + 1} / {numQuestions}
       </p>
       <p>
-        Points {points} / {maxPosiblePoints}
+        Points {points} / {maxPossiblePoints}
       </p>
     </header>
   );

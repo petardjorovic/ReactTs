@@ -7,6 +7,11 @@ import StartScreen from "./components/StartScreen";
 import Question from "./components/Question";
 import NextButton from "./components/NextButton";
 import Progress from "./components/Progress";
+import FinishScreen from "./components/FinishScreen";
+import Footer from "./components/Footer";
+import Timer from "./components/Timer";
+
+const SECS_PER_QUESTION = 30;
 
 export type QuestionType = {
   question: string;
@@ -22,6 +27,8 @@ type InitState = {
   index: number;
   answer: number | null;
   points: number;
+  highscore: number;
+  secondsRemaining: number;
 };
 
 const initialState: InitState = {
@@ -31,6 +38,8 @@ const initialState: InitState = {
   index: 0,
   answer: null,
   points: 0,
+  highscore: 0,
+  secondsRemaining: 0,
 };
 
 export type ActionType =
@@ -38,7 +47,10 @@ export type ActionType =
   | { type: "dataFailed" }
   | { type: "start" }
   | { type: "newAnswer"; payload: number }
-  | { type: "nextQuestion" };
+  | { type: "nextQuestion" }
+  | { type: "finish" }
+  | { type: "restart" }
+  | { type: "tick" };
 
 function reducer(state: InitState, action: ActionType) {
   switch (action.type) {
@@ -47,10 +59,13 @@ function reducer(state: InitState, action: ActionType) {
     case "dataFailed":
       return { ...state, status: "error" };
     case "start":
-      return { ...state, status: "active" };
+      return {
+        ...state,
+        status: "active",
+        secondsRemaining: SECS_PER_QUESTION * state.questions.length,
+      };
     case "newAnswer": {
       const question = state.questions[state.index];
-
       return {
         ...state,
         answer: action.payload,
@@ -62,19 +77,45 @@ function reducer(state: InitState, action: ActionType) {
     }
     case "nextQuestion":
       return { ...state, index: state.index + 1, answer: null };
+    case "finish":
+      return {
+        ...state,
+        status: "finished",
+        highscore:
+          state.points > state.highscore ? state.points : state.highscore,
+      };
+    case "restart":
+      return {
+        ...initialState,
+        questions: state.questions,
+        status: "ready",
+        highscore: state.highscore,
+      };
+    case "tick":
+      return {
+        ...state,
+        secondsRemaining: state.secondsRemaining - 1,
+        status: state.secondsRemaining === 0 ? "finished" : state.status,
+        highscore:
+          state.secondsRemaining === 0
+            ? state.points > state.highscore
+              ? state.points
+              : state.highscore
+            : state.highscore,
+      };
     default:
       throw new Error("Unknown type");
   }
 }
 
 function App() {
-  const [{ questions, status, index, answer, points }, dispatch] = useReducer(
-    reducer,
-    initialState
-  );
+  const [
+    { questions, status, index, answer, points, highscore, secondsRemaining },
+    dispatch,
+  ] = useReducer(reducer, initialState);
 
   const numQuestions = questions.length;
-  const maxPosiblePoints = questions.reduce(
+  const maxPossiblePoints = questions.reduce(
     (total, current) => total + current.points,
     0
   );
@@ -92,6 +133,7 @@ function App() {
   return (
     <div className="app">
       <Header />
+
       <Main>
         {status === "loading" && <Loader />}
         {status === "error" && <ErrorComponent />}
@@ -104,7 +146,7 @@ function App() {
               index={index}
               numQuestions={numQuestions}
               points={points}
-              maxPosiblePoints={maxPosiblePoints}
+              maxPossiblePoints={maxPossiblePoints}
               answer={answer}
             />
             <Question
@@ -112,8 +154,24 @@ function App() {
               dispatch={dispatch}
               answer={answer}
             />
-            <NextButton answer={answer} dispatch={dispatch} />
+            <Footer>
+              <Timer dispatch={dispatch} secondsRemaining={secondsRemaining} />
+              <NextButton
+                answer={answer}
+                dispatch={dispatch}
+                index={index}
+                numQuestions={numQuestions}
+              />
+            </Footer>
           </>
+        )}
+        {status === "finished" && (
+          <FinishScreen
+            maxPossiblePoints={maxPossiblePoints}
+            points={points}
+            highscore={highscore}
+            dispatch={dispatch}
+          />
         )}
       </Main>
     </div>
