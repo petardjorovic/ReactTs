@@ -3,7 +3,7 @@ import Sidebar from '../../components/Sidebar/Sidebar';
 import Map from '../../components/Map/Map';
 import { useEffect, useState } from 'react';
 
-type City = {
+export type City = {
     cityName: string;
     country: string;
     emoji: string;
@@ -41,7 +41,7 @@ export default function AppLayout() {
 
     return (
         <div className={styles.app}>
-            <Sidebar />
+            <Sidebar cities={cities} isLoading={isLoading} />
             <Map />
         </div>
     );

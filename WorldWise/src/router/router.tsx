@@ -7,6 +7,9 @@ import MainLayout from '../layouts/MainLayout';
 import PageNotFound from '../pages/PageNotFound/PageNotFound';
 import AppLayout from '../layouts/AppLayout/AppLayout';
 import CityList from '../components/CityList/CityList';
+import CountryList from '../components/CountryList/CountryList';
+import City from '../components/City/City';
+import Form from '../components/Form/Form';
 
 const router = createBrowserRouter([
     {
@@ -39,12 +42,16 @@ const router = createBrowserRouter([
                         element: <CityList />,
                     },
                     {
+                        path: 'cities/:id',
+                        element: <City />,
+                    },
+                    {
                         path: 'countries',
-                        element: <p>Countries</p>,
+                        element: <CountryList />,
                     },
                     {
                         path: 'form',
-                        element: <p>Form</p>,
+                        element: <Form />,
                     },
                 ],
             },
