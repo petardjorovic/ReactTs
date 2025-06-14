@@ -1,14 +1,11 @@
-import { useOutletContext } from 'react-router-dom';
 import styles from './CityList.module.css';
-import type { SidebarProps } from '../Sidebar/Sidebar';
 import Spinner from '../Spinner/Spinner';
 import CityItem from '../CityItem/CityItem';
 import Message from '../Message/Message';
-
-const useMyOutletContext = () => useOutletContext<SidebarProps>();
+import { useCities } from '../../context/CitiesContext';
 
 export default function CityList() {
-    const { cities, isLoading } = useMyOutletContext();
+    const { cities, isLoading } = useCities();
 
     if (isLoading) return <Spinner />;
 

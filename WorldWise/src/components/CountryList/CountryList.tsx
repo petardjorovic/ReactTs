@@ -1,19 +1,16 @@
-import { useOutletContext } from 'react-router-dom';
 import styles from './CountryList.module.css';
-import type { SidebarProps } from '../Sidebar/Sidebar';
 import Spinner from '../Spinner/Spinner';
 import CountryItem from '../CountryItem/CountryItem';
 import Message from '../Message/Message';
+import { useCities } from '../../context/CitiesContext';
 
 export type Country = {
     country: string;
     emoji: string;
 };
 
-const useMyOutletContext = () => useOutletContext<SidebarProps>();
-
 export default function CountryList() {
-    const { cities, isLoading } = useMyOutletContext();
+    const { cities, isLoading } = useCities();
 
     if (isLoading) return <Spinner />;
 
