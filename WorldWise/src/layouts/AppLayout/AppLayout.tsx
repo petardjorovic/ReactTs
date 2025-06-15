@@ -1,7 +1,6 @@
 import styles from './AppLayout.module.css';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Map from '../../components/Map/Map';
-import { CitiesProvider } from '../../context/CitiesContext';
 
 export type City = {
     cityName: string;
@@ -19,10 +18,8 @@ export type City = {
 export default function AppLayout() {
     return (
         <div className={styles.app}>
-            <CitiesProvider>
-                <Sidebar />
-                <Map />
-            </CitiesProvider>
+            <Sidebar />
+            <Map />
         </div>
     );
 }
