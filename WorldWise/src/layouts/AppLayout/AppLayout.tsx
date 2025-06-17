@@ -12,7 +12,7 @@ export type City = {
         lat: number;
         lng: number;
     };
-    id: number;
+    id: string;
 };
 
 export default function AppLayout() {

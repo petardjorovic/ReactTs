@@ -7,7 +7,7 @@ export default function ButtonBack() {
         <Button
             type='back'
             onClick={(e) => {
-                if (e) e.preventDefault();
+                e.preventDefault();
                 navigate(-1);
             }}
         >
