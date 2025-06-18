@@ -1,18 +1,7 @@
-import type { ActionType } from "../App";
+import { useQuiz } from "../context/QuizContext";
 
-type FinishScreenProps = {
-  points: number;
-  maxPossiblePoints: number;
-  highscore: number;
-  dispatch: React.ActionDispatch<[action: ActionType]>;
-};
-
-export default function FinishScreen({
-  points,
-  maxPossiblePoints,
-  highscore,
-  dispatch,
-}: FinishScreenProps) {
+export default function FinishScreen() {
+  const { points, maxPossiblePoints, highscore, dispatch } = useQuiz();
   const percentage = (points / maxPossiblePoints) * 100;
   let emoji;
   if (percentage === 100) emoji = "🥇";

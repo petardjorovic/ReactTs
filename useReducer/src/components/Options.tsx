@@ -1,12 +1,7 @@
-import type { ActionType, QuestionType } from "../App";
+import { useQuiz, type QuestionType } from "../context/QuizContext";
 
-type OptionsProps = {
-  question: QuestionType;
-  dispatch: React.ActionDispatch<[action: ActionType]>;
-  answer: number | null;
-};
-
-export default function Options({ question, dispatch, answer }: OptionsProps) {
+export default function Options({ question }: { question: QuestionType }) {
+  const { dispatch, answer } = useQuiz();
   const hasAnswered = answer !== null;
   return (
     <div className="options">
