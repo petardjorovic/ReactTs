@@ -35,30 +35,6 @@
         "lng": 13.376933665713324
       },
       "id": "98443197"
-    },
-    {
-      "id": "e2e0",
-      "cityName": "Prague",
-      "country": "Czechia",
-      "date": "2025-06-17T18:03:54.659Z",
-      "emoji": "🇨🇿",
-      "notes": "lelelee",
-      "position": {
-        "lat": 50.0240659702845,
-        "lng": 14.458007812500002
-      }
-    },
-    {
-      "id": "f7fa",
-      "cityName": "Cartagena",
-      "country": "Spain",
-      "date": "2025-06-17T18:22:16.679Z",
-      "emoji": "🇪🇸",
-      "notes": "test",
-      "position": {
-        "lat": 37.598171743388626,
-        "lng": -0.9667968750000001
-      }
     }
   ]
 }

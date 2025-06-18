@@ -10,6 +10,7 @@ import CityList from '../components/CityList/CityList';
 import CountryList from '../components/CountryList/CountryList';
 import City from '../components/City/City';
 import Form from '../components/Form/Form';
+import ProtectedRoute from '../pages/ProtectedRoute/ProtectedRoute';
 
 const router = createBrowserRouter([
     {
@@ -31,7 +32,11 @@ const router = createBrowserRouter([
             },
             {
                 path: 'app',
-                element: <AppLayout />,
+                element: (
+                    <ProtectedRoute>
+                        <AppLayout />
+                    </ProtectedRoute>
+                ),
                 children: [
                     {
                         index: true,
