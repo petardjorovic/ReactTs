@@ -1,7 +1,7 @@
 import FormAddPost from "./FormAddPost";
 import Posts from "./Posts";
 
-export default function Main() {
+function Main() {
   return (
     <main>
       <FormAddPost />
@@ -9,3 +9,5 @@ export default function Main() {
     </main>
   );
 }
+
+export default Main;

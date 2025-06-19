@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useReducer } from 'react';
+import { createContext, useCallback, useContext, useEffect, useReducer } from 'react';
 import type { City } from '../layouts/AppLayout/AppLayout';
 
 type CitiesCtxType = {
@@ -86,7 +86,7 @@ function CitiesProvider({ children }: { children: React.ReactNode }) {
         fetchCities();
     }, []);
 
-    async function getCity(id: string) {
+    const getCity = useCallback(async function getCity(id: string) {
         dispatch({ type: 'loading' });
         try {
             const res = await fetch(`${BASE_URL}/cities/${id}`);
@@ -96,7 +96,7 @@ function CitiesProvider({ children }: { children: React.ReactNode }) {
             console.log(err);
             dispatch({ type: 'rejected', payload: 'There was en error loading city...' });
         }
-    }
+    }, []);
 
     async function createCity(city: NewCity) {
         dispatch({ type: 'loading' });
