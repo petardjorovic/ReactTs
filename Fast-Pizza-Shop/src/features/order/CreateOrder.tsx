@@ -8,6 +8,8 @@ import {
   type LoaderFunctionArgs,
 } from 'react-router-dom';
 import Button from '../../ui/Button';
+import { useSelector } from 'react-redux';
+import type { RootStore } from '../../store';
 
 // https://uibakery.io/regex-library/phone-number
 const isValidPhone = (str: string) =>
@@ -46,6 +48,9 @@ function CreateOrder() {
   const formErrors = useActionData();
   // const [withPriority, setWithPriority] = useState(false);
   const cart = fakeCart;
+  const { username } = useSelector(
+    (state: RootStore) => state.userStore
+  );
 
   return (
     <div className="px-4 py-6">
@@ -63,6 +68,7 @@ function CreateOrder() {
             type="text"
             name="customer"
             required
+            defaultValue={username}
             className="input grow"
           />
         </div>
