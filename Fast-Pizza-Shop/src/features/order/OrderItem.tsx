@@ -10,6 +10,8 @@ type OrderItemProps = {
     totalPrice: number;
     unitPrice: number;
   };
+  ingredients: string[] | undefined;
+  isLoadingIngredients: boolean;
 };
 
 function OrderItem({
@@ -32,6 +34,11 @@ function OrderItem({
           {formatCurrency(totalPrice)}
         </p>
       </div>
+      <p className="text-sm capitalize italic text-stone-500">
+        {isLoadingIngredients
+          ? 'Loading...'
+          : ingredients?.join(', ')}
+      </p>
     </li>
   );
 }

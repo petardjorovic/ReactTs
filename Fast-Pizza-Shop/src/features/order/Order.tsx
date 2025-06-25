@@ -1,6 +1,7 @@
 // Test ID: IIDSAT
 
 import {
+  useFetcher,
   useLoaderData,
   type LoaderFunctionArgs,
 } from 'react-router-dom';
@@ -11,6 +12,8 @@ import {
   formatDate,
 } from '../../utils/helpers';
 import OrderItem from './OrderItem';
+import { useEffect } from 'react';
+import type { PizzaItem } from '../menu/MenuItem';
 
 type OrderType = {
   cart: {
@@ -34,6 +37,20 @@ type OrderType = {
 function Order() {
   const order: OrderType = useLoaderData();
   // Everyone can search for all orders, so for privacy reasons we're gonna gonna exclude names or address, these are only for the restaurant staff
+  const fetcher = useFetcher<PizzaItem[]>();
+
+  useEffect(
+    function () {
+      if (
+        !fetcher.data &&
+        fetcher.state === 'idle'
+      ) {
+        fetcher.load('/menu');
+      }
+    },
+    [fetcher]
+  );
+
   const {
     id,
     status,
@@ -82,6 +99,14 @@ function Order() {
         {cart.map((item) => (
           <OrderItem
             item={item}
+            ingredients={
+              fetcher?.data?.find(
+                (el) => el.id === item.pizzaId
+              )?.ingredients ?? []
+            }
+            isLoadingIngredients={
+              fetcher.state === 'loading'
+            }
             key={item.pizzaId}
           />
         ))}

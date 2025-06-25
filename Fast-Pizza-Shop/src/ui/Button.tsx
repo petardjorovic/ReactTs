@@ -5,11 +5,19 @@ export default function Button({
   disabled,
   to,
   type,
+  onClick,
 }: {
   children: React.ReactNode;
   disabled?: boolean;
   to?: string;
-  type: 'primary' | 'secondary' | 'small';
+  type:
+    | 'primary'
+    | 'secondary'
+    | 'small'
+    | 'round';
+  onClick?: (
+    e?: React.MouseEvent<HTMLButtonElement>
+  ) => void;
 }) {
   const base =
     'inline-block rounded-full bg-yellow-400 text-sm font-semibold uppercase tracking-wide text-stone-800 transition-colors duration-300 hover:bg-yellow-300 focus:bg-yellow-300 focus:outline-none focus:ring focus:ring-yellow-300 focus:ring-offset-2 disabled:cursor-not-allowed ';
@@ -20,6 +28,9 @@ export default function Button({
     small:
       base +
       'px-4 py-2 md:px-5 md:py-2.5 text-xs',
+    round:
+      base +
+      'px-2.5 py-1 md:px-3.5 md:py-2 text-sm',
   };
 
   if (to)
@@ -27,6 +38,17 @@ export default function Button({
       <Link to={to} className={styles[type]}>
         {children}
       </Link>
+    );
+
+  if (onClick)
+    return (
+      <button
+        disabled={disabled}
+        className={styles[type]}
+        onClick={onClick}
+      >
+        {children}
+      </button>
     );
 
   return (
