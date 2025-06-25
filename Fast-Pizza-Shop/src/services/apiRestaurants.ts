@@ -1,4 +1,5 @@
-const API_URL = 'https://react-fast-pizza-api.jonas.io/api';
+const API_URL =
+  'https://react-fast-pizza-api.jonas.io/api';
 
 export async function getMenu() {
   const res = await fetch(`${API_URL}/menu`);
@@ -11,8 +12,11 @@ export async function getMenu() {
 }
 
 export async function getOrder(id: string) {
-  const res = await fetch(`${API_URL}/order/${id}`);
-  if (!res.ok) throw Error(`Couldn't find order #${id}`);
+  const res = await fetch(
+    `${API_URL}/order/${id}`
+  );
+  if (!res.ok)
+    throw Error(`Couldn't find order #${id}`);
 
   const { data } = await res.json();
   return data;
@@ -36,15 +40,21 @@ export async function createOrder(newOrder: {}) {
   }
 }
 
-export async function updateOrder(id: string, updateObj: {}) {
+export async function updateOrder(
+  id: string | undefined,
+  updateObj: { priority: boolean }
+) {
   try {
-    const res = await fetch(`${API_URL}/order/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify(updateObj),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    const res = await fetch(
+      `${API_URL}/order/${id}`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify(updateObj),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
 
     if (!res.ok) throw Error();
     // We don't need the data, so we don't return anything

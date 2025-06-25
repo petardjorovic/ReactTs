@@ -14,8 +14,9 @@ import {
 import OrderItem from './OrderItem';
 import { useEffect } from 'react';
 import type { PizzaItem } from '../menu/MenuItem';
+import UpdateOrder from './UpdateOrder';
 
-type OrderType = {
+export type OrderType = {
   cart: {
     addIngredients: [];
     name: string;
@@ -130,6 +131,7 @@ function Order() {
           )}
         </p>
       </div>
+      {!priority && <UpdateOrder order={order} />}
     </div>
   );
 }
