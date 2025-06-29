@@ -1,7 +1,7 @@
 import styled, { css } from "styled-components";
 
 type FormProps = {
-  type: string;
+  type?: string;
 };
 
 const Form = styled.form<FormProps>`

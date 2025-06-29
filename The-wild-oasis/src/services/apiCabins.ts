@@ -24,6 +24,30 @@ export async function getCabins(): Promise<CabinType[]> {
   return data;
 }
 
+type CreateCabinProps = {
+  name: string;
+  maxCapacity: number;
+  regularPrice: number;
+  discount: number;
+  description: string;
+};
+
+export async function createCabin(
+  newCabin: CreateCabinProps
+): Promise<CabinType> {
+  const { data, error } = await supabase
+    .from("cabins")
+    .insert([newCabin])
+    .select();
+
+  if (error) {
+    console.error(error);
+    throw new Error("Cabin could not be created");
+  }
+
+  return data[0];
+}
+
 export async function deleteCabin(id: number): Promise<void> {
   const { error } = await supabase.from("cabins").delete().eq("id", id);
 
