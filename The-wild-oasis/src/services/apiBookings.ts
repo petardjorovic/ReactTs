@@ -1,5 +1,5 @@
 import { getToday } from "../utils/helpers";
-import supabase from "./supabase";
+import supabase from "./supabaseClient";
 
 export async function getBooking(id) {
   const { data, error } = await supabase

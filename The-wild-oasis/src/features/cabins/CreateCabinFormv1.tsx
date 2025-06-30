@@ -69,7 +69,7 @@ function CreateCabinForm() {
   >({
     mutationFn: createCabin,
     onSuccess: () => {
-      toast.success("New cabin successfully created");
+      toast.success("New cabin successfully cretaed");
       queryClient.invalidateQueries({ queryKey: ["cabins"] });
       reset();
     },
@@ -167,9 +167,7 @@ function CreateCabinForm() {
         <FileInput
           id="image"
           accept="image/*"
-          {...register("image", {
-            required: "This field is required",
-          })}
+          {...register("image", { required: "This field is required" })}
         />
       </FormRow>
 

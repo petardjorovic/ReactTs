@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import styled from "styled-components";
-import { getCabins, type CabinType } from "../../services/apiCabins";
+import { getCabins, type Cabin } from "../../services/apiCabins";
 import Spinner from "../../ui/Spinner";
 import CabinRow from "./CabinRow";
 
@@ -33,7 +33,7 @@ export default function CabinTable() {
     isLoading,
     error,
     data: cabins,
-  } = useQuery<Awaited<ReturnType<typeof getCabins>>, Error>({
+  } = useQuery<Cabin[], Error>({
     queryKey: ["cabins"],
     queryFn: getCabins,
   });
