@@ -1,16 +1,15 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import toast from "react-hot-toast";
-import { useForm, type SubmitHandler } from "react-hook-form";
 import styled from "styled-components";
+import { useForm, type SubmitHandler } from "react-hook-form";
 
-import { editCabin, type Cabin } from "../../services/apiCabins";
 import Input from "../../ui/Input";
 import Form from "../../ui/Form";
 import Button from "../../ui/Button";
 import FileInput from "../../ui/FileInput";
 import Textarea from "../../ui/Textarea";
 import FormRow from "../../ui/FormRow";
+import { useUpdateCabin } from "./useUpdateCabin";
 import type { CabinFormValues } from "./CreateCabinForm";
+import { type Cabin } from "../../services/apiCabins";
 
 const FormRow2 = styled.div`
   display: grid;
@@ -39,23 +38,12 @@ const FormRow2 = styled.div`
   }
 `;
 
-type UpdateCabinProps = {
-  newCabin: {
-    name: string;
-    maxCapacity: number;
-    regularPrice: number;
-    discount: number;
-    description: string;
-    image: FileList | string;
-  };
-  id: number;
-};
-
 type EditCabinFormProps = {
   cabin: Cabin;
 };
 
 function EditCabinForm({ cabin }: EditCabinFormProps) {
+  const { isEditing, updateCabin } = useUpdateCabin();
   const {
     register,
     handleSubmit,
@@ -73,30 +61,17 @@ function EditCabinForm({ cabin }: EditCabinFormProps) {
     },
   });
 
-  const queryClient = useQueryClient();
-
-  const { isPending: isEditing, mutate: updateCabin } = useMutation<
-    Cabin,
-    Error,
-    UpdateCabinProps
-  >({
-    mutationFn: ({ newCabin, id }) => editCabin(newCabin, id),
-    onSuccess: () => {
-      toast.success("Cabin successfully updated");
-      queryClient.invalidateQueries({ queryKey: ["cabins"] });
-      reset();
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
-
   const onSubmit: SubmitHandler<CabinFormValues> = (data) => {
     const image = data.image?.[0] ? data.image : cabin.image ?? "";
 
-    console.log(data);
-
-    updateCabin({ newCabin: { ...data, image }, id: cabin.id });
+    updateCabin(
+      { newCabin: { ...data, image }, id: cabin.id },
+      {
+        onSuccess: () => {
+          reset();
+        },
+      }
+    );
   };
 
   return (
@@ -139,7 +114,6 @@ function EditCabinForm({ cabin }: EditCabinFormProps) {
           type="number"
           id="discount"
           disabled={isEditing}
-          defaultValue={0}
           {...register("discount", {
             valueAsNumber: true,
             required: "This field is required",
@@ -160,8 +134,6 @@ function EditCabinForm({ cabin }: EditCabinFormProps) {
       >
         <Textarea
           id="description"
-          defaultValue=""
-          disabled={isEditing}
           {...register("description", { required: "This field is required" })}
         />
       </FormRow>

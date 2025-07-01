@@ -93,10 +93,16 @@ export async function editCabin(
 
 export async function createCabin(newCabin: CabinFormValues): Promise<Cabin> {
   const imageFile = newCabin.image[0];
-  const imageName = `${Math.random()}-${imageFile.name}`.replaceAll("/", "");
-  const imagePath = `${
-    import.meta.env.VITE_SUPABASE_URL as string
-  }/storage/v1/object/public/cabin-images/${imageName}`;
+  const imageName =
+    imageFile instanceof File
+      ? `${Math.random()}-${imageFile.name}`.replaceAll("/", "")
+      : null;
+  const imagePath =
+    typeof newCabin.image === "string"
+      ? newCabin.image
+      : `${
+          import.meta.env.VITE_SUPABASE_URL as string
+        }/storage/v1/object/public/cabin-images/${imageName}`;
 
   // 1. create cabin
   const { data: insertData, error: insertError } = await supabase
@@ -118,6 +124,8 @@ export async function createCabin(newCabin: CabinFormValues): Promise<Cabin> {
     console.error(insertError);
     throw new Error("Cabin could not be created");
   }
+
+  if (!imageName) return insertData;
 
   // 2. upload image
   const { error: storageError } = await supabase.storage

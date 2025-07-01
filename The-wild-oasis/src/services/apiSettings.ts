@@ -1,6 +1,9 @@
+import type { Database } from "../types/supabase";
 import supabase from "./supabaseClient";
 
-export async function getSettings() {
+export type Settings = Database["public"]["Tables"]["settings"]["Row"];
+
+export async function getSettings(): Promise<Settings> {
   const { data, error } = await supabase.from("settings").select("*").single();
 
   if (error) {
@@ -10,8 +13,17 @@ export async function getSettings() {
   return data;
 }
 
+export type NewSettingProp = {
+  minBookingLength?: number;
+  maxBookingLength?: number;
+  maxGuestPerBooking?: number;
+  breakfastPrice?: number;
+};
+
 // We expect a newSetting object that looks like {setting: newValue}
-export async function updateSetting(newSetting) {
+export async function updateSetting(
+  newSetting: NewSettingProp
+): Promise<Settings> {
   const { data, error } = await supabase
     .from("settings")
     .update(newSetting)
