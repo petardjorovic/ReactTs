@@ -1,3 +1,5 @@
+import type React from "react";
+import { createContext, useContext } from "react";
 import styled from "styled-components";
 
 const StyledTable = styled.div`
@@ -9,7 +11,11 @@ const StyledTable = styled.div`
   overflow: hidden;
 `;
 
-const CommonRow = styled.div`
+type CommonRowProps = {
+  columns: string;
+};
+
+const CommonRow = styled.div<CommonRowProps>`
   display: grid;
   grid-template-columns: ${(props) => props.columns};
   column-gap: 2.4rem;
@@ -58,3 +64,74 @@ const Empty = styled.p`
   text-align: center;
   margin: 2.4rem;
 `;
+
+type TableProps = {
+  columns: string;
+  children: React.ReactNode;
+};
+
+type TableContextType = {
+  columns: string;
+};
+
+const TableContext = createContext<TableContextType | undefined>(undefined);
+
+function Table({ columns, children }: TableProps) {
+  return (
+    <TableContext.Provider value={{ columns }}>
+      <StyledTable role="table">{children}</StyledTable>
+    </TableContext.Provider>
+  );
+}
+
+type HeaderProps = {
+  children: React.ReactNode;
+};
+
+function Header({ children }: HeaderProps) {
+  const context = useContext(TableContext);
+  if (!context)
+    throw new Error("useContext must be used within contextProvider");
+  const { columns } = context;
+
+  return (
+    <StyledHeader columns={columns} role="row" as="header">
+      {children}
+    </StyledHeader>
+  );
+}
+
+type RowProps = {
+  children: React.ReactNode;
+};
+
+function Row({ children }: RowProps) {
+  const context = useContext(TableContext);
+  if (!context)
+    throw new Error("useContext must be used within contextProvider");
+  const { columns } = context;
+
+  return (
+    <StyledRow columns={columns} role="row">
+      {children}
+    </StyledRow>
+  );
+}
+
+type BodyProps<T> = {
+  data: T[];
+  render: (item: T) => React.ReactElement;
+};
+
+function Body<T>({ data, render }: BodyProps<T>) {
+  if (!data.length) return <Empty>No data to show at the moment</Empty>;
+
+  return <StyledBody>{data.map(render)}</StyledBody>;
+}
+
+Table.Header = Header;
+Table.Row = Row;
+Table.Body = Body;
+Table.Footer = Footer;
+
+export default Table;
