@@ -40,9 +40,10 @@ const FormRow2 = styled.div`
 
 type EditCabinFormProps = {
   cabin: Cabin;
+  onCloseModal?: () => void;
 };
 
-function EditCabinForm({ cabin }: EditCabinFormProps) {
+function EditCabinForm({ cabin, onCloseModal }: EditCabinFormProps) {
   const { isEditing, updateCabin } = useUpdateCabin();
   const {
     register,
@@ -69,13 +70,14 @@ function EditCabinForm({ cabin }: EditCabinFormProps) {
       {
         onSuccess: () => {
           reset();
+          onCloseModal?.();
         },
       }
     );
   };
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
+    <Form onSubmit={handleSubmit(onSubmit)} type="modal">
       <FormRow label="Cabin name" error={errors?.name?.message}>
         <Input
           type="text"
@@ -144,7 +146,12 @@ function EditCabinForm({ cabin }: EditCabinFormProps) {
 
       <FormRow2>
         {/* type is an HTML attribute! */}
-        <Button variation="secondary" type="reset" size="medium">
+        <Button
+          variation="secondary"
+          type="reset"
+          size="medium"
+          onClick={() => onCloseModal?.()}
+        >
           Cancel
         </Button>
         <Button size="medium" variation="primary" disabled={isEditing}>

@@ -50,7 +50,11 @@ export type CabinFormValues = {
   image: FileList | string;
 };
 
-function CreateCabinForm() {
+type CreateCabinProps = {
+  onCloseModal?: () => void;
+};
+
+function CreateCabinForm({ onCloseModal }: CreateCabinProps) {
   const { isCreating, createCabin } = useCreateCabin();
   const {
     register,
@@ -65,6 +69,7 @@ function CreateCabinForm() {
       onSuccess: (data: Cabin) => {
         console.log(data);
         reset();
+        onCloseModal?.();
       },
     });
   };
@@ -84,7 +89,10 @@ function CreateCabinForm() {
   };
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit, onError)}>
+    <Form
+      onSubmit={handleSubmit(onSubmit, onError)}
+      type={onCloseModal ? "modal" : "regular"}
+    >
       <FormRow label="Cabin name" error={errors?.name?.message}>
         <Input
           type="text"
@@ -162,7 +170,12 @@ function CreateCabinForm() {
 
       <FormRow2>
         {/* type is an HTML attribute! */}
-        <Button variation="secondary" type="reset" size="medium">
+        <Button
+          variation="secondary"
+          type="reset"
+          size="medium"
+          onClick={() => onCloseModal?.()}
+        >
           Cancel
         </Button>
         <Button size="medium" variation="primary" disabled={isCreating}>
