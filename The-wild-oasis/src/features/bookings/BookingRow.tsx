@@ -6,6 +6,7 @@ import Table from "../../ui/Table";
 
 import { formatCurrency } from "../../utils/helpers";
 import { formatDistanceFromNow } from "../../utils/helpers";
+import type { BookingWithRelations } from "../../services/apiBookings";
 
 const Cabin = styled.div`
   font-size: 1.6rem;
@@ -34,51 +35,53 @@ const Amount = styled.div`
   font-weight: 500;
 `;
 
-function BookingRow({
-  booking: {
-    id: bookingId,
-    created_at,
-    startDate,
-    endDate,
-    numNights,
-    numGuests,
-    totalPrice,
-    status,
-    guests: { fullName: guestName, email },
-    cabins: { name: cabinName },
-  },
-}) {
-  const statusToTagName = {
+type BookingRowProps = {
+  booking: BookingWithRelations;
+};
+
+type BookingStatus = "unconfirmed" | "checked-in" | "checked-out";
+
+function BookingRow({ booking }: BookingRowProps) {
+  const statusToTagName: Record<BookingStatus, "blue" | "green" | "silver"> = {
     unconfirmed: "blue",
     "checked-in": "green",
     "checked-out": "silver",
   };
 
+  const safeStatus = (booking.status ?? "unconfirmed") as BookingStatus;
+
   return (
     <Table.Row>
-      <Cabin>{cabinName}</Cabin>
+      <Cabin>{booking.cabins?.name}</Cabin>
 
       <Stacked>
-        <span>{guestName}</span>
-        <span>{email}</span>
+        <span>{booking.guests?.fullName}</span>
+        <span>{booking.guests?.email}</span>
       </Stacked>
 
       <Stacked>
         <span>
-          {isToday(new Date(startDate))
-            ? "Today"
-            : formatDistanceFromNow(startDate)}{" "}
-          &rarr; {numNights} night stay
+          {booking.startDate
+            ? isToday(new Date(booking.startDate))
+              ? "Today"
+              : formatDistanceFromNow(booking.startDate)
+            : "Unknown start"}{" "}
+          &rarr; {booking.numNights} night stay
         </span>
         <span>
-          {format(new Date(startDate), "MMM dd yyyy")} &mdash;{" "}
-          {format(new Date(endDate), "MMM dd yyyy")}
+          {booking.startDate && booking.endDate
+            ? `${format(new Date(booking.startDate), "MMM dd yyyy")} —
+          ${format(new Date(booking.endDate), "MMM dd yyyy")}`
+            : "Unknown dates"}
+          `
         </span>
       </Stacked>
 
-      <Tag type={statusToTagName[status]}>{status.replace("-", " ")}</Tag>
+      <Tag type={statusToTagName[safeStatus]}>
+        {booking?.status?.replace("-", " ")}
+      </Tag>
 
-      <Amount>{formatCurrency(totalPrice)}</Amount>
+      <Amount>{formatCurrency(booking.totalPrice ?? 0)}</Amount>
     </Table.Row>
   );
 }
