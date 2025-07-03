@@ -1,4 +1,5 @@
 import type { Database } from "../types/supabase";
+import { PAGE_SIZE } from "../utils/constants";
 import { getToday } from "../utils/helpers";
 import supabase from "./supabaseClient";
 
@@ -28,15 +29,20 @@ type GetBookingsProps = {
     field: string;
     direction: string;
   };
+  page: number;
 };
 
 export async function getBookings({
   filter,
   sortBy,
-}: GetBookingsProps): Promise<BookingWithRelations[]> {
+  page,
+}: GetBookingsProps): Promise<{
+  data: BookingWithRelations[];
+  count: number | null;
+}> {
   const query = supabase
     .from("bookings")
-    .select("*, cabins(name), guests(fullName, email)");
+    .select("*, cabins(name), guests(fullName, email)", { count: "exact" });
 
   // FILTER
   if (filter) {
@@ -49,14 +55,19 @@ export async function getBookings({
   if (sortBy)
     query.order(sortBy.field, { ascending: sortBy.direction === "asc" });
 
-  const { data, error } = await query;
+  // PAGINATION
+  const from = (page - 1) * PAGE_SIZE;
+  const to = from + PAGE_SIZE - 1;
+  if (page) query.range(from, to);
+
+  const { data, error, count } = await query;
 
   if (error) {
     console.error(error);
     throw new Error("Bookings could not be loaded");
   }
 
-  return data ?? [];
+  return { data: data ?? [], count };
 }
 
 export async function getBooking(id: number) {
@@ -128,20 +139,20 @@ export async function getStaysTodayActivity() {
   return data;
 }
 
-export async function updateBooking(id: number, obj) {
-  const { data, error } = await supabase
-    .from("bookings")
-    .update(obj)
-    .eq("id", id)
-    .select()
-    .single();
+// export async function updateBooking(id: number, obj) {
+//   const { data, error } = await supabase
+//     .from("bookings")
+//     .update(obj)
+//     .eq("id", id)
+//     .select()
+//     .single();
 
-  if (error) {
-    console.error(error);
-    throw new Error("Booking could not be updated");
-  }
-  return data;
-}
+//   if (error) {
+//     console.error(error);
+//     throw new Error("Booking could not be updated");
+//   }
+//   return data;
+// }
 
 export async function deleteBooking(id: number) {
   // REMEMBER RLS POLICIES
