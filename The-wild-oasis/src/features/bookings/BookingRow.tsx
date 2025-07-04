@@ -7,6 +7,9 @@ import Table from "../../ui/Table";
 import { formatCurrency } from "../../utils/helpers";
 import { formatDistanceFromNow } from "../../utils/helpers";
 import type { BookingWithRelations } from "../../services/apiBookings";
+import Menus from "../../ui/Menus";
+import { HiEye } from "react-icons/hi2";
+import { useNavigate } from "react-router-dom";
 
 const Cabin = styled.div`
   font-size: 1.6rem;
@@ -39,7 +42,7 @@ type BookingRowProps = {
   booking: BookingWithRelations;
 };
 
-type BookingStatus = "unconfirmed" | "checked-in" | "checked-out";
+export type BookingStatus = "unconfirmed" | "checked-in" | "checked-out";
 
 function BookingRow({ booking }: BookingRowProps) {
   const statusToTagName: Record<BookingStatus, "blue" | "green" | "silver"> = {
@@ -47,6 +50,7 @@ function BookingRow({ booking }: BookingRowProps) {
     "checked-in": "green",
     "checked-out": "silver",
   };
+  const navigate = useNavigate();
 
   const safeStatus = (booking.status ?? "unconfirmed") as BookingStatus;
 
@@ -82,6 +86,17 @@ function BookingRow({ booking }: BookingRowProps) {
       </Tag>
 
       <Amount>{formatCurrency(booking.totalPrice ?? 0)}</Amount>
+      <Menus.Menu>
+        <Menus.Toggle id={booking.id.toString()} />
+        <Menus.List id={booking.id.toString()}>
+          <Menus.Button
+            icon={<HiEye />}
+            onClick={() => navigate(`/bookings/${booking.id}`)}
+          >
+            See details
+          </Menus.Button>
+        </Menus.List>
+      </Menus.Menu>
     </Table.Row>
   );
 }

@@ -1,9 +1,12 @@
 import type { Database } from "../types/supabase";
 import { PAGE_SIZE } from "../utils/constants";
 import { getToday } from "../utils/helpers";
+import type { Cabin } from "./apiCabins";
 import supabase from "./supabaseClient";
 
 type BookingBase = Database["public"]["Tables"]["bookings"]["Row"];
+
+type Guest = Database["public"]["Tables"]["guests"]["Row"];
 
 type CabinInfo = {
   name: string | null;
@@ -17,6 +20,11 @@ type GuestInfo = {
 export type BookingWithRelations = BookingBase & {
   cabins: CabinInfo | null;
   guests: GuestInfo | null;
+};
+
+export type SingleBookingWithRealtions = BookingBase & {
+  cabins: Cabin | null;
+  guests: Guest | null;
 };
 
 type GetBookingsProps = {
@@ -70,7 +78,9 @@ export async function getBookings({
   return { data: data ?? [], count };
 }
 
-export async function getBooking(id: number) {
+export async function getBooking(
+  id: number
+): Promise<SingleBookingWithRealtions> {
   const { data, error } = await supabase
     .from("bookings")
     .select("*, cabins(*), guests(*)")

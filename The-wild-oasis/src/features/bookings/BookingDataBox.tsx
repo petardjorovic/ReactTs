@@ -11,6 +11,7 @@ import DataItem from "../../ui/DataItem";
 import { Flag } from "../../ui/Flag";
 
 import { formatDistanceFromNow, formatCurrency } from "../../utils/helpers";
+import type { SingleBookingWithRealtions } from "../../services/apiBookings";
 
 const StyledBookingDataBox = styled.section`
   /* Box */
@@ -68,7 +69,11 @@ const Guest = styled.div`
   }
 `;
 
-const Price = styled.div`
+type PriceProps = {
+  isPaid: boolean;
+};
+
+const Price = styled.div<PriceProps>`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -101,23 +106,27 @@ const Footer = styled.footer`
   text-align: right;
 `;
 
+type BookingDataBoxProps = {
+  booking: SingleBookingWithRealtions | undefined;
+};
+
 // A purely presentational component
-function BookingDataBox({ booking }) {
-  const {
-    created_at,
-    startDate,
-    endDate,
-    numNights,
-    numGuests,
-    cabinPrice,
-    extrasPrice,
-    totalPrice,
-    hasBreakfast,
-    observations,
-    isPaid,
-    guests: { fullName: guestName, email, country, countryFlag, nationalID },
-    cabins: { name: cabinName },
-  } = booking;
+function BookingDataBox({ booking }: BookingDataBoxProps) {
+  // const {
+  //   created_at,
+  //   startDate,
+  //   endDate,
+  //   numNights,
+  //   numGuests,
+  //   cabinPrice,
+  //   extrasPrice,
+  //   totalPrice,
+  //   hasBreakfast,
+  //   observations,
+  //   isPaid,
+  //   guests, // { fullName: guestName, email, country, countryFlag, nationalID },
+  //   cabins, // { name: cabinName },
+  // } = booking;
 
   return (
     <StyledBookingDataBox>
@@ -125,60 +134,84 @@ function BookingDataBox({ booking }) {
         <div>
           <HiOutlineHomeModern />
           <p>
-            {numNights} nights in Cabin <span>{cabinName}</span>
+            {booking?.numNights} nights in Cabin{" "}
+            <span>{booking?.cabins?.name}</span>
           </p>
         </div>
 
         <p>
-          {format(new Date(startDate), "EEE, MMM dd yyyy")} (
-          {isToday(new Date(startDate))
-            ? "Today"
-            : formatDistanceFromNow(startDate)}
-          ) &mdash; {format(new Date(endDate), "EEE, MMM dd yyyy")}
+          {booking?.startDate
+            ? format(new Date(booking?.startDate), "EEE, MMM dd yyyy")
+            : "Unknown date"}{" "}
+          (
+          {booking?.startDate
+            ? isToday(new Date(booking?.startDate))
+              ? "Today"
+              : formatDistanceFromNow(booking?.startDate)
+            : "Unknown date"}
+          ) &mdash;{" "}
+          {booking?.endDate
+            ? format(new Date(booking?.endDate), "EEE, MMM dd yyyy")
+            : "Unknown date"}
         </p>
       </Header>
 
       <Section>
         <Guest>
-          {countryFlag && <Flag src={countryFlag} alt={`Flag of ${country}`} />}
+          {booking?.guests?.countryFlag && (
+            <Flag
+              src={booking?.guests?.countryFlag}
+              alt={`Flag of ${booking?.guests?.nationality}`}
+            />
+          )}
           <p>
-            {guestName} {numGuests > 1 ? `+ ${numGuests - 1} guests` : ""}
+            {booking?.guests?.fullName}{" "}
+            {Number(booking?.numGuests) > 1
+              ? `+ ${Number(booking?.numGuests) - 1} guests`
+              : ""}
           </p>
           <span>&bull;</span>
-          <p>{email}</p>
+          <p>{booking?.guests?.email}</p>
           <span>&bull;</span>
-          <p>National ID {nationalID}</p>
+          <p>National ID {booking?.guests?.nationalID}</p>
         </Guest>
 
-        {observations && (
+        {booking?.observations && (
           <DataItem
             icon={<HiOutlineChatBubbleBottomCenterText />}
             label="Observations"
           >
-            {observations}
+            {booking.observations}
           </DataItem>
         )}
 
         <DataItem icon={<HiOutlineCheckCircle />} label="Breakfast included?">
-          {hasBreakfast ? "Yes" : "No"}
+          {booking?.hasBreakfast ? "Yes" : "No"}
         </DataItem>
 
-        <Price isPaid={isPaid}>
+        <Price isPaid={booking?.isPaid ?? false}>
           <DataItem icon={<HiOutlineCurrencyDollar />} label={`Total price`}>
-            {formatCurrency(totalPrice)}
+            {formatCurrency(booking?.totalPrice ?? 0)}
 
-            {hasBreakfast &&
-              ` (${formatCurrency(cabinPrice)} cabin + ${formatCurrency(
-                extrasPrice
+            {booking?.hasBreakfast &&
+              ` (${formatCurrency(
+                booking?.cabinPrice ?? 0
+              )} cabin + ${formatCurrency(
+                booking?.extrasPrice ?? 0
               )} breakfast)`}
           </DataItem>
 
-          <p>{isPaid ? "Paid" : "Will pay at property"}</p>
+          <p>{booking?.isPaid ? "Paid" : "Will pay at property"}</p>
         </Price>
       </Section>
 
       <Footer>
-        <p>Booked {format(new Date(created_at), "EEE, MMM dd yyyy, p")}</p>
+        <p>
+          Booked{" "}
+          {booking?.created_at
+            ? format(new Date(booking?.created_at), "EEE, MMM dd yyyy, p")
+            : "Unknown date"}
+        </p>
       </Footer>
     </StyledBookingDataBox>
   );

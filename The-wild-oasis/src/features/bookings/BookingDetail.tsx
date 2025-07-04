@@ -9,6 +9,9 @@ import Button from "../../ui/Button";
 import ButtonText from "../../ui/ButtonText";
 
 import { useMoveBack } from "../../hooks/useMoveBack";
+import { useBooking } from "./useBooking";
+import type { BookingStatus } from "./BookingRow";
+import Spinner from "../../ui/Spinner";
 
 const HeadingGroup = styled.div`
   display: flex;
@@ -17,8 +20,8 @@ const HeadingGroup = styled.div`
 `;
 
 function BookingDetail() {
-  const booking = {};
-  const status = "checked-in";
+  const { isLoading, data: booking } = useBooking();
+  const status = booking?.status ?? "checked-in";
 
   const moveBack = useMoveBack();
 
@@ -28,12 +31,18 @@ function BookingDetail() {
     "checked-out": "silver",
   };
 
+  const safeStatus = (booking?.status ?? "unconfirmed") as BookingStatus;
+
+  if (isLoading) return <Spinner />;
+
   return (
     <>
       <Row type="horizontal">
         <HeadingGroup>
-          <Heading as="h1">Booking #X</Heading>
-          <Tag type={statusToTagName[status]}>{status.replace("-", " ")}</Tag>
+          <Heading as="h1">Booking #{booking?.id}</Heading>
+          <Tag type={statusToTagName[safeStatus]}>
+            {status.replace("-", " ")}
+          </Tag>
         </HeadingGroup>
         <ButtonText onClick={moveBack}>&larr; Back</ButtonText>
       </Row>
@@ -41,7 +50,7 @@ function BookingDetail() {
       <BookingDataBox booking={booking} />
 
       <ButtonGroup>
-        <Button variation="secondary" onClick={moveBack}>
+        <Button size="medium" variation="secondary" onClick={moveBack}>
           Back
         </Button>
       </ButtonGroup>
