@@ -4,7 +4,7 @@ import { getToday } from "../utils/helpers";
 import type { Cabin } from "./apiCabins";
 import supabase from "./supabaseClient";
 
-type BookingBase = Database["public"]["Tables"]["bookings"]["Row"];
+export type BookingBase = Database["public"]["Tables"]["bookings"]["Row"];
 
 type Guest = Database["public"]["Tables"]["guests"]["Row"];
 
@@ -149,20 +149,28 @@ export async function getStaysTodayActivity() {
   return data;
 }
 
-// export async function updateBooking(id: number, obj) {
-//   const { data, error } = await supabase
-//     .from("bookings")
-//     .update(obj)
-//     .eq("id", id)
-//     .select()
-//     .single();
+type UpdateObject = {
+  status: string;
+  isPaid: boolean;
+};
 
-//   if (error) {
-//     console.error(error);
-//     throw new Error("Booking could not be updated");
-//   }
-//   return data;
-// }
+export async function updateBooking(
+  id: number,
+  obj: UpdateObject
+): Promise<BookingBase> {
+  const { data, error } = await supabase
+    .from("bookings")
+    .update(obj)
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error(error);
+    throw new Error("Booking could not be updated");
+  }
+  return data;
+}
 
 export async function deleteBooking(id: number) {
   // REMEMBER RLS POLICIES

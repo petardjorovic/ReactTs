@@ -112,22 +112,6 @@ type BookingDataBoxProps = {
 
 // A purely presentational component
 function BookingDataBox({ booking }: BookingDataBoxProps) {
-  // const {
-  //   created_at,
-  //   startDate,
-  //   endDate,
-  //   numNights,
-  //   numGuests,
-  //   cabinPrice,
-  //   extrasPrice,
-  //   totalPrice,
-  //   hasBreakfast,
-  //   observations,
-  //   isPaid,
-  //   guests, // { fullName: guestName, email, country, countryFlag, nationalID },
-  //   cabins, // { name: cabinName },
-  // } = booking;
-
   return (
     <StyledBookingDataBox>
       <Header>
