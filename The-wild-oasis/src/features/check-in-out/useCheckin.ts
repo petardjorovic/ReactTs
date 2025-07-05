@@ -18,7 +18,12 @@ export function useCheckin() {
       updateBooking(bookingId, { ...obj, status: "checked-in", isPaid: true }),
     onSuccess: (data) => {
       toast.success(`Booking #${data.id} successfully checked in`);
-      queryClient.invalidateQueries({ queryKey: ["bookings"] });
+      queryClient
+        .getQueryCache()
+        .findAll({ predicate: (query) => query.getObserversCount() > 0 })
+        .forEach((query) => {
+          queryClient.invalidateQueries({ queryKey: query.queryKey });
+        });
       navigate("/");
     },
     onError: () => toast.error("There was an error while checking in"),

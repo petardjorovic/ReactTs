@@ -150,8 +150,8 @@ export async function getStaysTodayActivity() {
 }
 
 type UpdateObject = {
-  status: string;
-  isPaid: boolean;
+  status?: string;
+  isPaid?: boolean;
   hasBreakfast?: boolean;
   extrasPrice?: number;
   totalPrice?: number;

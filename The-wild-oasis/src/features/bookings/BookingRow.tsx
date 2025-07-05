@@ -8,8 +8,9 @@ import { formatCurrency } from "../../utils/helpers";
 import { formatDistanceFromNow } from "../../utils/helpers";
 import type { BookingWithRelations } from "../../services/apiBookings";
 import Menus from "../../ui/Menus";
-import { HiArrowDownOnSquare, HiEye } from "react-icons/hi2";
+import { HiArrowDownOnSquare, HiArrowUpOnSquare, HiEye } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
+import { useCheckout } from "../check-in-out/useCheckout";
 
 const Cabin = styled.div`
   font-size: 1.6rem;
@@ -45,6 +46,7 @@ type BookingRowProps = {
 export type BookingStatus = "unconfirmed" | "checked-in" | "checked-out";
 
 function BookingRow({ booking }: BookingRowProps) {
+  const { checkout } = useCheckout();
   const statusToTagName: Record<BookingStatus, "blue" | "green" | "silver"> = {
     unconfirmed: "blue",
     "checked-in": "green",
@@ -102,6 +104,20 @@ function BookingRow({ booking }: BookingRowProps) {
               onClick={() => navigate(`/checkin/${booking.id}`)}
             >
               Check in
+            </Menus.Button>
+          )}
+
+          {booking.status === "checked-in" && (
+            <Menus.Button
+              icon={<HiArrowUpOnSquare />}
+              onClick={() =>
+                checkout({
+                  bookingId: booking.id,
+                  obj: { status: "checked-out" },
+                })
+              }
+            >
+              Check out
             </Menus.Button>
           )}
         </Menus.List>
