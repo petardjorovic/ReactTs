@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import Button from "./Button";
+import { useMoveBack } from "../hooks/useMoveBack";
 
 const StyledErrorFallback = styled.main`
   height: 100vh;
@@ -29,3 +31,22 @@ const Box = styled.div`
     color: var(--color-grey-500);
   }
 `;
+
+type ErrorFallbackProps = {
+  message: string;
+};
+
+export default function ErrorFallback({ message }: ErrorFallbackProps) {
+  const moveBack = useMoveBack();
+  return (
+    <StyledErrorFallback>
+      <Box>
+        <h1>An error occured</h1>
+        <p>{message}</p>
+        <Button onClick={moveBack} size="large" variation="primary">
+          &larr; Back
+        </Button>
+      </Box>
+    </StyledErrorFallback>
+  );
+}
