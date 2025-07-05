@@ -9,10 +9,13 @@ export function useCheckin() {
   const { isPending: isCheckingIn, mutate: checkin } = useMutation<
     BookingBase,
     Error,
-    number
+    {
+      bookingId: number;
+      obj?: { hasBreakfast: boolean; extrasPrice: number; totalPrice: number };
+    }
   >({
-    mutationFn: (bookingId) =>
-      updateBooking(bookingId, { status: "checked-in", isPaid: true }),
+    mutationFn: ({ bookingId, obj }) =>
+      updateBooking(bookingId, { ...obj, status: "checked-in", isPaid: true }),
     onSuccess: (data) => {
       toast.success(`Booking #${data.id} successfully checked in`);
       queryClient.invalidateQueries({ queryKey: ["bookings"] });
