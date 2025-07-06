@@ -37,3 +37,8 @@ export async function getCurrentUser(): Promise<User | null> {
 
   return data.user;
 }
+
+export async function logout(): Promise<void> {
+  const { error } = await supabase.auth.signOut();
+  if (error) throw new Error(error.message);
+}
