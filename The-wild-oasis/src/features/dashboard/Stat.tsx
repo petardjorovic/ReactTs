@@ -1,3 +1,4 @@
+import type React from "react";
 import styled from "styled-components";
 
 const StyledStat = styled.div`
@@ -14,7 +15,11 @@ const StyledStat = styled.div`
   row-gap: 0.4rem;
 `;
 
-const Icon = styled.div`
+type IconProps = {
+  color: string;
+};
+
+const Icon = styled.div<IconProps>`
   grid-row: 1 / -1;
   aspect-ratio: 1;
   border-radius: 50%;
@@ -47,7 +52,14 @@ const Value = styled.p`
   font-weight: 500;
 `;
 
-function Stat({ icon, title, value, color }) {
+interface StatProps {
+  icon: React.ReactElement;
+  title: string;
+  value: number | string | undefined;
+  color: string;
+}
+
+function Stat({ icon, title, value, color }: StatProps) {
   return (
     <StyledStat>
       <Icon color={color}>{icon}</Icon>

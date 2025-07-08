@@ -95,8 +95,16 @@ export async function getBooking(
   return data;
 }
 
+export type RecentBooking = {
+  created_at: string;
+  totalPrice: number | null;
+  extrasPrice: number | null;
+};
+
 // Returns all BOOKINGS that are were created after the given date. Useful to get bookings created in the last 30 days, for example.
-export async function getBookingsAfterDate(date: string) {
+export async function getBookingsAfterDate(
+  date: string
+): Promise<RecentBooking[]> {
   const { data, error } = await supabase
     .from("bookings")
     .select("created_at, totalPrice, extrasPrice")
@@ -111,11 +119,16 @@ export async function getBookingsAfterDate(date: string) {
   return data;
 }
 
+export type RecentStay = BookingBase & {
+  guests: {
+    fullName: string | null;
+  } | null;
+};
+
 // Returns all STAYS that are were created after the given date
-export async function getStaysAfterDate(date: string) {
+export async function getStaysAfterDate(date: string): Promise<RecentStay[]> {
   const { data, error } = await supabase
     .from("bookings")
-    // .select('*')
     .select("*, guests(fullName)")
     .gte("startDate", date)
     .lte("startDate", getToday());
