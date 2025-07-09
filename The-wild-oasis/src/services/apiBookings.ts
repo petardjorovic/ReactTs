@@ -141,8 +141,16 @@ export async function getStaysAfterDate(date: string): Promise<RecentStay[]> {
   return data;
 }
 
+export type TodayStay = BookingBase & {
+  guests: {
+    fullName: string | null;
+    nationality: string | null;
+    countryFlag: string | null;
+  } | null;
+};
+
 // Activity means that there is a check in or a check out today
-export async function getStaysTodayActivity() {
+export async function getStaysTodayActivity(): Promise<TodayStay[]> {
   const { data, error } = await supabase
     .from("bookings")
     .select("*, guests(fullName, nationality, countryFlag)")

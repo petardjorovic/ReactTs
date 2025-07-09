@@ -1,4 +1,15 @@
 import styled from "styled-components";
+import type { RecentStay } from "../../services/apiBookings";
+import {
+  Cell,
+  Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+} from "recharts";
+import Heading from "../../ui/Heading";
+import { useDarkMode } from "../../hooks/useDarkMode";
 
 const ChartBox = styled.div`
   /* Box */
@@ -17,6 +28,12 @@ const ChartBox = styled.div`
     font-weight: 600;
   }
 `;
+
+interface DataColor {
+  duration: string;
+  value: number;
+  color: string;
+}
 
 const startDataLight = [
   {
@@ -61,7 +78,7 @@ const startDataLight = [
   },
 ];
 
-const startDataDark = [
+const startDataDark: DataColor[] = [
   {
     duration: "1 night",
     value: 0,
@@ -104,18 +121,18 @@ const startDataDark = [
   },
 ];
 
-function prepareData(startData, stays) {
+function prepareData(startData: DataColor[], stays: RecentStay[] | undefined) {
   // A bit ugly code, but sometimes this is what it takes when working with real data 😅
 
-  function incArrayValue(arr, field) {
+  function incArrayValue(arr: DataColor[], field: string) {
     return arr.map((obj) =>
       obj.duration === field ? { ...obj, value: obj.value + 1 } : obj
     );
   }
 
-  const data = stays
-    .reduce((arr, cur) => {
-      const num = cur.numNights;
+  const data = (stays ?? [])
+    ?.reduce((arr, cur) => {
+      const num = cur.numNights ?? 0;
       if (num === 1) return incArrayValue(arr, "1 night");
       if (num === 2) return incArrayValue(arr, "2 nights");
       if (num === 3) return incArrayValue(arr, "3 nights");
@@ -129,4 +146,55 @@ function prepareData(startData, stays) {
     .filter((obj) => obj.value > 0);
 
   return data;
+}
+
+interface DurationChartProps {
+  confirmedStays: RecentStay[] | undefined;
+}
+
+export default function DurationChart({ confirmedStays }: DurationChartProps) {
+  const { isDarkMode } = useDarkMode();
+  const startData = isDarkMode ? startDataDark : startDataLight;
+
+  const data = prepareData(startData, confirmedStays);
+  console.log(data);
+
+  return (
+    <ChartBox>
+      <Heading as={"h2"}>Stay duration summary</Heading>
+      <ResponsiveContainer width={"100%"} height={240}>
+        <PieChart>
+          <Pie
+            data={data}
+            nameKey={"duration"}
+            dataKey="value"
+            innerRadius={85}
+            outerRadius={110}
+            cx="40%"
+            cy="50%"
+            paddingAngle={3}
+          >
+            {data?.map((entry) => {
+              return (
+                <Cell
+                  key={entry.duration}
+                  fill={entry.color}
+                  stroke={entry.color}
+                />
+              );
+            })}
+          </Pie>
+          <Tooltip />
+          <Legend
+            verticalAlign="middle"
+            align="right"
+            width={175}
+            layout="vertical"
+            iconSize={15}
+            iconType="circle"
+          />
+        </PieChart>
+      </ResponsiveContainer>
+    </ChartBox>
+  );
 }
