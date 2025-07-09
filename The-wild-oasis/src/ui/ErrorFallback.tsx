@@ -1,6 +1,7 @@
 import styled from "styled-components";
+import Heading from "./Heading";
+import GlobalStyles from "../styles/GlobalStyles";
 import Button from "./Button";
-import { useMoveBack } from "../hooks/useMoveBack";
 
 const StyledErrorFallback = styled.main`
   height: 100vh;
@@ -33,20 +34,26 @@ const Box = styled.div`
 `;
 
 type ErrorFallbackProps = {
-  message: string;
+  error: Error;
+  resetErrorBoundary: () => void;
 };
 
-export default function ErrorFallback({ message }: ErrorFallbackProps) {
-  const moveBack = useMoveBack();
+export default function ErrorFallback({
+  error,
+  resetErrorBoundary,
+}: ErrorFallbackProps) {
   return (
-    <StyledErrorFallback>
-      <Box>
-        <h1>An error occured</h1>
-        <p>{message}</p>
-        <Button onClick={moveBack} size="large" variation="primary">
-          &larr; Back
-        </Button>
-      </Box>
-    </StyledErrorFallback>
+    <>
+      <GlobalStyles />
+      <StyledErrorFallback>
+        <Box>
+          <Heading as={"h1"}>Something went wrong 🤔</Heading>
+          <p>{error.message}</p>
+          <Button size="large" variation="primary" onClick={resetErrorBoundary}>
+            Try again
+          </Button>
+        </Box>
+      </StyledErrorFallback>
+    </>
   );
 }

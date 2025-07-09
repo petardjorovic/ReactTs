@@ -17,7 +17,7 @@ import { useCheckout } from "../check-in-out/useCheckout";
 import { useDeleteBooking } from "./useDeleteBooking";
 import ConfirmDelete from "../../ui/ConfirmDelete";
 import Modal from "../../ui/Modal";
-import ErrorFallback from "../../ui/ErrorFallback";
+import Empty from "../../ui/Empty";
 
 const HeadingGroup = styled.div`
   display: flex;
@@ -26,7 +26,7 @@ const HeadingGroup = styled.div`
 `;
 
 function BookingDetail() {
-  const { isLoading, data: booking, error: getBookingError } = useBooking();
+  const { isLoading, data: booking } = useBooking();
   const { checkout, isCheckingOut } = useCheckout();
   const { deleteBooking, isDeleting } = useDeleteBooking();
   const status = booking?.status ?? "checked-in";
@@ -43,8 +43,8 @@ function BookingDetail() {
   const safeStatus = (booking?.status ?? "unconfirmed") as BookingStatus;
 
   if (isLoading) return <Spinner />;
-  if (getBookingError)
-    return <ErrorFallback message={getBookingError.message} />;
+
+  if (!booking) return <Empty resourceName="booking" />;
 
   return (
     <>

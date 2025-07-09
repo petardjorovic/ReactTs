@@ -157,7 +157,6 @@ export default function DurationChart({ confirmedStays }: DurationChartProps) {
   const startData = isDarkMode ? startDataDark : startDataLight;
 
   const data = prepareData(startData, confirmedStays);
-  console.log(data);
 
   return (
     <ChartBox>

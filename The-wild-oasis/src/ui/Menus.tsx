@@ -120,6 +120,8 @@ function Toggle({ id }: ToggleProps) {
   const { close, open, openId, setPosition } = context;
 
   function handleClick(e: React.MouseEvent<HTMLButtonElement>) {
+    e.stopPropagation();
+
     const rect = (e.target as HTMLElement)
       .closest("button")
       ?.getBoundingClientRect();
@@ -155,7 +157,7 @@ function List({ id, children }: ListProps) {
     throw new Error("useContext must be used within contextProvider");
   const { openId, position, close } = context;
 
-  const ref = useClickOutside<HTMLUListElement>(close);
+  const ref = useClickOutside<HTMLUListElement>(close, false);
 
   if (openId !== id || !position) return null;
 
