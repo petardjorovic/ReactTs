@@ -1,9 +1,5 @@
 import styled from "styled-components";
-import {
-  useForm,
-  type SubmitErrorHandler,
-  type SubmitHandler,
-} from "react-hook-form";
+import { useForm, type SubmitHandler } from "react-hook-form";
 
 import Input from "../../ui/Input";
 import Form from "../../ui/Form";
@@ -84,13 +80,13 @@ function CreateCabinForm({ onCloseModal }: CreateCabinProps) {
   //   console.log(errors);
   // }
 
-  const onError: SubmitErrorHandler<CabinFormValues> = (errors) => {
-    // console.log(errors);
-  };
+  // const onError: SubmitErrorHandler<CabinFormValues> = (errors) => {
+  //   console.log(errors);
+  // };
 
   return (
     <Form
-      onSubmit={handleSubmit(onSubmit, onError)}
+      onSubmit={handleSubmit(onSubmit)} // drugi argument je onError function
       type={onCloseModal ? "modal" : "regular"}
     >
       <FormRow label="Cabin name" error={errors?.name?.message}>

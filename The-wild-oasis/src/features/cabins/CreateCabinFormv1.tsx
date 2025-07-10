@@ -1,10 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import {
-  useForm,
-  type SubmitErrorHandler,
-  type SubmitHandler,
-} from "react-hook-form";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import styled from "styled-components";
 
 import { createCabin, type Cabin } from "../../services/apiCabins";
@@ -92,12 +88,14 @@ function CreateCabinForm() {
   //   console.log(errors);
   // }
 
-  const onError: SubmitErrorHandler<CabinFormValues> = (errors) => {
-    // console.log(errors);
-  };
+  // const onError: SubmitErrorHandler<CabinFormValues> = (errors) => {
+  //   // console.log(errors);
+  // };
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit, onError)}>
+    <Form onSubmit={handleSubmit(onSubmit)}>
+      {" "}
+      // drugi argument handleSubmit function je onError function
       <FormRow label="Cabin name" error={errors?.name?.message}>
         <Input
           type="text"
@@ -118,7 +116,6 @@ function CreateCabinForm() {
           })}
         />
       </FormRow>
-
       <FormRow label="Regular price" error={errors?.regularPrice?.message}>
         <Input
           type="number"
@@ -150,7 +147,6 @@ function CreateCabinForm() {
           })}
         />
       </FormRow>
-
       <FormRow
         label="Description for website"
         error={errors?.description?.message}
@@ -162,7 +158,6 @@ function CreateCabinForm() {
           {...register("description", { required: "This field is required" })}
         />
       </FormRow>
-
       <FormRow label="Cabin photo" error={errors?.image?.message}>
         <FileInput
           id="image"
@@ -170,7 +165,6 @@ function CreateCabinForm() {
           {...register("image", { required: "This field is required" })}
         />
       </FormRow>
-
       <FormRow2>
         {/* type is an HTML attribute! */}
         <Button variation="secondary" type="reset" size="medium">
